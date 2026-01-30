@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  web:
+    build: ./web
+    container_name: fampinion-web
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./web:/app
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_USER: fampinion
+      DB_PASSWORD: fampinion
+      DB_NAME: fampinion
+
+  db:
+    image: postgres:16
+    container_name: fampinion-db
+    environment:
+      POSTGRES_USER: fampinion
+      POSTGRES_PASSWORD: fampinion
+      POSTGRES_DB: fampinion
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:

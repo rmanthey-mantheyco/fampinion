@@ -1,0 +1,60 @@
+<h2>Add User</h2>
+<form id="userForm">
+  <input name="name" placeholder="Name" required />
+  <input name="email" placeholder="Email" required />
+  <input name="color" placeholder="Favorite Color" required />
+  <button type="submit">Save</button>
+</form>
+
+<h2>Saved Users</h2>
+<table border="1" id="usersTable">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Favorite Color</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<script>
+  async function loadUsers() {
+    const res = await fetch("/users");
+    const users = await res.json();
+
+    const tbody = document.querySelector("#usersTable tbody");
+    tbody.innerHTML = "";
+
+    users.forEach(u => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${u.name}</td>
+        <td>${u.email}</td>
+        <td>${u.color}</td>
+      `;
+      tbody.appendChild(row);
+    });
+  }
+
+  document.getElementById("userForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const formData = {
+      name: e.target.name.value,
+      email: e.target.email.value,
+      color: e.target.color.value
+    };
+
+    await fetch("/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData)
+    });
+
+    e.target.reset();
+    loadUsers();
+  });
+
+  loadUsers();
+</script>
